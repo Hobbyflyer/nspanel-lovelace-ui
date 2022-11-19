@@ -1,6 +1,6 @@
 // Description:
 //  Creates JSON String for NSPanel CardPower
-//  Date : 18.11.2022
+//  Date : 19.11.2022
 //
 //  { 
 //  "id": 1,                          top left 0 (down) top right 3 (down)                 
@@ -13,7 +13,7 @@
 //  }
 //
 
-let Debug=true;
+let Debug=false;
 
 var Bat_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';
 var Bat_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';
@@ -27,7 +27,7 @@ var watch = [Bat_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy]
 
 var dpValues, outJSON ;
 var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];
-var dpValuesMax = [1300, 6000, 600, 8000, 8000, 11000];
+var dpValuesMax = [1300, 6000, 600, 4000, 8000, 11000];
 var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];
 var iconString = ['battery-charging-60', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car'];
 
@@ -42,12 +42,27 @@ on({id: watch, change: "any"}, async function (obj) {
 
   outJSON = '[';
   for (var i_index in dpValues) {
-    var speed = parseInt(Math.round((10* dpValues[i_index]) / dpValuesMax[i_index])) ;  
+    var speed =parseInt(Math.round( (10* dpValues[i_index]) / dpValuesMax[i_index] ));  
     
     //Bat icon color depends on AccuLevel   
     if (i_index == 0)
       {
         iconColor = 10 - Math.round(getState(Bat_AkkuLevel).val / 10) ;
+        speed = speed * -1;
+        var level = getState(Bat_AkkuLevel).val; 
+        
+        iconString[0]="battery-alert-variant-outline";
+        if ( level > 20)
+           iconString[0]="battery-charging-20";
+        if (level > 40)
+           iconString[0]="battery-charging-40";
+        if (level > 60)
+           iconString[0]="battery-charging-60";
+        if (level > 80)
+           iconString[0]="battery-charging-80";
+        if (level> 95)
+           iconString[0]="battery";
+           
       }
 
     if(i_index == 1 || i_index == 2)
