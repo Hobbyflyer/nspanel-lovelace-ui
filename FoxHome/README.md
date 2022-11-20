@@ -36,5 +36,21 @@ SetOption146 1
 SetOption73 1
 ```
 
+## CardPower Script
+
+Colors:<br>
+Colors from NSPalnelts.ts <bold>Dynamische Indikatoren</bold><br>
+
+<span style="color: rgb(99, 190, 123)">colorindex=0</span><br>
+<span style="color: rgb(129, 199, 126)">colorindex=1</span><br>
+<span style="color: rgb(161, 208, 127)">colorindex=2</span><br>
+<span style="color: rgb(129, 217, 126)">colorindex=3</span><br>
+<span style="color: rgb(222, 226, 131)">colorindex=4</span><br>
+<span style="color: rgb(254, 235, 132)">colorindex=5</span><br>
+<span style="color: rgb(255, 210, 129)">colorindex=6</span><br>
+<span style="color: rgb(251, 185, 124)">colorindex=7</span><br>
+<span style="color: rgb(251, 158, 117)">colorindex=8</span><br>
+<span style="color: rgb(248, 131, 111)">colorindex=9</span><br>
+<span style="color: rgb(248, 105, 107)">colorindex=10</span><br>
 
 

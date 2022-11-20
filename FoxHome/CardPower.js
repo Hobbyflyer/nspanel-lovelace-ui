@@ -13,6 +13,32 @@
 //  }
 //
 
+// define debug= true for console output 
+let Debug=false;
+
+// define Datapoints
+var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';
+var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';
+var SolarEnergy   = 'alias.0.logging.Energy.SOLAR_ENERGY.ACTUAL';
+var BKWEnergy     = 'alias.0.logging.Energy.BKW_energy.ACTUAL';
+var HouseEnergy   = 'alias.0.logging.Energy.House_Energy.ACTUAL';
+var GridEnergy    = 'alias.0.logging.Energy.GRID_ENERGY.ACTUAL';
+var CarEnergy     = 'alias.0.logging.Energy.Car_Energy.ACTUAL';
+var DPJSON        = '0_userdata.0.PVPower';
+var watch = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy];
+
+var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];
+var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];
+var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];
+var iconString = ['battery', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car'];
+var CardpowerHeader ='Energiefluss';
+// CustomSend DataPoints for dynamic updating screen
+var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];
+
+
+// ******************************************************************+
+
+// color definition according to NSPanelts.ts "Dynamische Indikatoren"
 let color0 = { red:   99, green: 190, blue: 123 };
 let color1 = { red:  129, green: 199, blue: 126 };
 let color2 = { red:  161, green: 208, blue: 127 };
@@ -27,52 +53,37 @@ let color10 = { red:  248, green: 105, blue: 107 };
 
 let color =[color0,color1,color2,color3,color4,color5,color6,color7,color8,color9,color10];
 
-// define debug 
-let Debug=false;
-// define IconSelector for CustomSend String (update screen)
+// define IconSelector for CustomSend String, used for updating screen
 let Icons = new IconsSelector();        
 
-// define Datapoints
-var Bat_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';
-var Bat_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';
-var SolarEnergy   = 'alias.0.logging.Energy.SOLAR_ENERGY.ACTUAL';
-var BKWEnergy     = 'alias.0.logging.Energy.BKW_energy.ACTUAL';
-var HouseEnergy   = 'alias.0.logging.Energy.House_Energy.ACTUAL';
-var GridEnergy    = 'alias.0.logging.Energy.GRID_ENERGY.ACTUAL';
-var CarEnergy     = 'alias.0.logging.Energy.Car_Energy.ACTUAL';
-var DPJSON        = '0_userdata.0.PVPower';
-var watch = [Bat_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy];
-
-var CustomSend = ['mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];
-
 var dpValues, outJSON, outCustomSend ;
-var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];
-var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];
-var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];
-var iconString = ['battery-charging-60', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car'];
 
+// watch Datapoins for change
 on({id: watch, change: "any"}, async function (obj) {
   var iconColor=  0;
-  dpValues = [getState(Bat_DisCharge).val, 
+  dpValues = [getState(Batt_DisCharge).val, 
               getState(SolarEnergy).val, 
               getState(BKWEnergy).val, 
               getState(HouseEnergy).val,
               getState(GridEnergy).val,
               0];
-
+  // start JSON String for outJSON
   outJSON = '[';
-  outCustomSend='entityUpd~Energiefluss~1|1~65535~~';
+  // start String for dynamic update 
+  outCustomSend='entityUpd~'+CardpowerHeader+'~1|1~65535~~';
 
+  //for each icon collect values
   for (var i_index in dpValues) {
+    // calculate iconspeed
     var speed =parseInt(Math.round( (10* dpValues[i_index]) / dpValuesMax[i_index] ));  
     
-    //Bat icon color depends on AccuLevel   
-    if (i_index == 0)
+    //Batt icon color depends on AccuLevel   
+    if (i_index == 0) 
       {
-        iconColor = 10 - Math.round(getState(Bat_AkkuLevel).val / 10) ;
-        speed = speed * -1;
-        var level = getState(Bat_AkkuLevel).val; 
-        
+        var level = getState(Batt_AkkuLevel).val; 
+        iconColor = 10 - Math.round(level / 10) ;
+        speed = speed * -1; //invert direction
+        // change icon
         iconString[0]="battery-alert-variant-outline";
         if ( level > 20)
            iconString[0]="battery-charging-20";
@@ -96,12 +107,12 @@ on({id: watch, change: "any"}, async function (obj) {
         iconColor = parseInt(Math.round((10 * dpValues[i_index]) / dpValuesMax[i_index])) ;    
       }
 
-    // Grid reverse animation
     if (i_index == 4)
       {  
-        speed = speed * -1;
+        speed = speed * -1; //invert direction
       }
-      
+    
+    // create item for DPJSON  
     var Item='{ \"id\": ' + i_index +
              ', \"value\": ' + parseInt(dpValues[i_index]) +
              ', \"unit\": \"' + dpValueUnit[i_index] +'\"' +
@@ -113,19 +124,20 @@ on({id: watch, change: "any"}, async function (obj) {
          Item= Item + ','; 
     outJSON = String(outJSON) + Item;
 
-    var CSicon= Icons.GetIcon(iconString[i_index])
+    // create item for CustomSend
+    var CSicon= Icons.GetIcon(iconString[i_index]) ;
     var CSiconcolor =  rgb_dec565(color[iconColor]) ;   
     outCustomSend= outCustomSend + '~' + CSiconcolor+ '~' + CSicon +'~' + speed + '~' + parseInt(dpValues[i_index]) + ' ' + dpValueUnit[i_index];
   }
-
+  // write DPJSON
   outJSON = String(outJSON) + ']';
   setState(DPJSON, outJSON);
  
-  // get activepage 
+  // get activepage for each Panel
   CustomSend.forEach(function (item) {
     var activepage= JSON.stringify(getState(item));
     // if activepage == Energie ... // hack cause ther is not Dp with activepage
-    if (activepage.includes("Energie"))
+    if (activepage.includes(CardpowerHeader))
       setState(item,outCustomSend);
   })
       
