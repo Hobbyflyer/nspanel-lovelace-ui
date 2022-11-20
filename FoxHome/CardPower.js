@@ -13,19 +13,19 @@
 //  }
 //
 
-/*//Dynamische Indikatoren
-const colorScale0:      RGB = { red:   99, green: 190, blue: 123 };
-const colorScale1:      RGB = { red:  129, green: 199, blue: 126 };
-const colorScale2:      RGB = { red:  161, green: 208, blue: 127 };
-const colorScale3:      RGB = { red:  129, green: 217, blue: 126 };
-const colorScale4:      RGB = { red:  222, green: 226, blue: 131 };
-const colorScale5:      RGB = { red:  254, green: 235, blue: 132 };
-const colorScale6:      RGB = { red:  255, green: 210, blue: 129 };
-const colorScale7:      RGB = { red:  251, green: 185, blue: 124 };
-const colorScale8:      RGB = { red:  251, green: 158, blue: 117 };
-const colorScale9:      RGB = { red:  248, green: 131, blue: 111 };
-const colorScale10:     RGB = { red:  248, green: 105, blue: 107 };
-*/
+let color0 = { red:   99, green: 190, blue: 123 };
+let color1 = { red:  129, green: 199, blue: 126 };
+let color2 = { red:  161, green: 208, blue: 127 };
+let color3 = { red:  129, green: 217, blue: 126 };
+let color4 = { red:  222, green: 226, blue: 131 };
+let color5 = { red:  254, green: 235, blue: 132 };
+let color6 = { red:  255, green: 210, blue: 129 };
+let color7 = { red:  251, green: 185, blue: 124 };
+let color8 = { red:  251, green: 158, blue: 117 };
+let color9 = { red:  248, green: 131, blue: 111 };
+let color10 = { red:  248, green: 105, blue: 107 };
+
+let color =[color0,color1,color2,color3,color4,color5,color6,color7,color8,color9,color10];
 
 // define debug 
 let Debug=false;
@@ -114,8 +114,7 @@ on({id: watch, change: "any"}, async function (obj) {
     outJSON = String(outJSON) + Item;
 
     var CSicon= Icons.GetIcon(iconString[i_index])
-    var CSiconcolor =  rgb_dec565(255,255,255) ;   
-    console.log(CSiconcolor); 
+    var CSiconcolor =  rgb_dec565(color[iconColor]) ;   
     outCustomSend= outCustomSend + '~' + CSiconcolor+ '~' + CSicon +'~' + speed + '~' + parseInt(dpValues[i_index]) + ' ' + dpValueUnit[i_index];
   }
 
@@ -127,10 +126,7 @@ on({id: watch, change: "any"}, async function (obj) {
     var activepage= JSON.stringify(getState(item));
     // if activepage == Energie ... // hack cause ther is not Dp with activepage
     if (activepage.includes("Energie"))
-    {
-      //console.log(outCustomSend);
       setState(item,outCustomSend);
-    }
   })
       
   if (Debug) {
@@ -138,9 +134,9 @@ on({id: watch, change: "any"}, async function (obj) {
   }
 });
 
-function rgb_dec565(r,g,b) {
+function rgb_dec565(color) {
     //return ((Math.floor(rgb.red / 255 * 31) << 11) | (Math.floor(rgb.green / 255 * 63) << 5) | (Math.floor(rgb.blue / 255 * 31)));
-    return ((r >> 3) << 11) | ((g >> 2)) << 5 | ((b) >> 3)
+    return ((color.red >> 3) << 11) | ((color.green >> 2)) << 5 | ((color.blue) >> 3)
 }
 
 
