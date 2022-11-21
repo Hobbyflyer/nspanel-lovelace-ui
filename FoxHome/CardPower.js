@@ -19,13 +19,15 @@ let Debug=false;
 // define Datapoints
 var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';
 var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';
-var SolarEnergy   = 'alias.0.logging.Energy.SOLAR_ENERGY.ACTUAL';
-var BKWEnergy     = 'alias.0.logging.Energy.BKW_energy.ACTUAL';
-var HouseEnergy   = 'alias.0.logging.Energy.House_Energy.ACTUAL';
-var GridEnergy    = 'alias.0.logging.Energy.GRID_ENERGY.ACTUAL';
-var CarEnergy     = 'alias.0.logging.Energy.Car_Energy.ACTUAL';
-var DPJSON        = '0_userdata.0.PVPower';
-var watch = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy];
+var Batt_Temp      = 'senec.0.TEMPMEASURE.BATTERY_TEMP';
+var Batt_Health    =  ['senec.0.BMS.SOH.0','senec.0.BMS.SOH.1'];
+var SolarEnergy    = 'alias.0.logging.Energy.SOLAR_ENERGY.ACTUAL';
+var BKWEnergy      = 'alias.0.logging.Energy.BKW_energy.ACTUAL';
+var HouseEnergy    = 'alias.0.logging.Energy.House_Energy.ACTUAL';
+var GridEnergy     = 'alias.0.logging.Energy.GRID_ENERGY.ACTUAL';
+var CarEnergy      = 'alias.0.logging.Energy.Car_Energy.ACTUAL';
+var DPJSON         = '0_userdata.0.PVPower';
+var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy];
 
 var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];
 var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];
@@ -34,7 +36,8 @@ var iconString = ['battery', 'solar-power-variant', 'solar-power-variant', 'home
 var CardpowerHeader ='Energiefluss';
 // CustomSend DataPoints for dynamic updating screen
 var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];
-
+var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage'];
+       
 
 // ******************************************************************+
 
@@ -79,24 +82,33 @@ on({id: watch, change: "any"}, async function (obj) {
     
     //Batt icon color depends on AccuLevel   
     if (i_index == 0) 
+      // check healtyness of Battery 
+      if (getState(Batt_Temp).val > 35 || getState(Batt_Health[0]).val < 97 || getState(Batt_Health[1]).val <97 )
+      {
+        iconString[0]="battery-heart-variant";
+        iconColor=10;
+      }
+      else
       {
         var level = getState(Batt_AkkuLevel).val; 
         iconColor = 10 - Math.round(level / 10) ;
         speed = speed * -1; //invert direction
         // change icon
         iconString[0]="battery-alert-variant-outline";
+        if ( level > 10)
+          iconString[0]="battery-charging-outline";
         if ( level > 20)
-           iconString[0]="battery-charging-20";
+          iconString[0]="battery-charging-20";
         if (level > 40)
-           iconString[0]="battery-charging-40";
+          iconString[0]="battery-charging-40";
         if (level > 60)
-           iconString[0]="battery-charging-60";
+          iconString[0]="battery-charging-60";
         if (level > 80)
-           iconString[0]="battery-charging-80";
+          iconString[0]="battery-charging-80";
         if (level> 95)
-           iconString[0]="battery";
+          iconString[0]="battery";
       }
-
+   
     if(i_index == 1 || i_index == 2)
       {
         iconColor = parseInt(10 - Math.round((10 * dpValues[i_index]) / dpValuesMax[i_index])) ;    
@@ -140,6 +152,7 @@ on({id: watch, change: "any"}, async function (obj) {
     if (activepage.includes(CardpowerHeader))
       setState(item,outCustomSend);
   })
+  
       
   if (Debug) {
     console.log(outJSON);
@@ -150,6 +163,3 @@ function rgb_dec565(color) {
     //return ((Math.floor(rgb.red / 255 * 31) << 11) | (Math.floor(rgb.green / 255 * 63) << 5) | (Math.floor(rgb.blue / 255 * 31)));
     return ((color.red >> 3) << 11) | ((color.green >> 2)) << 5 | ((color.blue) >> 3)
 }
-
-
-
