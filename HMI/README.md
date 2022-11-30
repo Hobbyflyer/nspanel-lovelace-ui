@@ -165,7 +165,7 @@ options are ? seperated
 onoffbtn has to be`disable` to disable the on off btn
 tIconBtnEntityName is the entiy name used in the button event for pressing the upper left icon
 
-`entityUpd~*heading*~*navigation*~*internalNameEntiy*~*icon*~iconcolor~*title*~titlecolor~*author*~authorcolor~*volume*~*playpauseicon*~currentSpeaker~speakerList-seperated-by-?~onoffbtn~tIconBtnEntityName`
+`entityUpd~*heading*~*navigation*~*internalNameEntiy*~*icon*~iconcolor~*title*~titlecolor~*author*~authorcolor~*volume*~*playpauseicon*~currentSpeaker~speakerList-seperated-by-?~onoffbtn~tIconBtnEntityName,iconShuffle`
 
 ### cardAlarm Page
 
@@ -180,6 +180,12 @@ tIconBtnEntityName is the entiy name used in the button event for pressing the u
 `entityUpd~heading~navigation~colorHome~iconHome~textHome[~iconColor~icon~speed~valueDown]x6`
 
 `entityUpd~test~1|1~6666~A~hu~8888~B~1~t0u~9999~C~2~t1u~1111~D~3~t2u~33333~E~-1~t3u~3333~F~-2~t4u~4444~G~-3~t5u`
+
+### cardChart Page
+`entityUpd~heading~navigation~color~yAxisLabel~yAxisTick:[yAxisTick]*[~value[:xAxisLabel]?]*`  
+
+`entityUpd~Chart Demo~1|1~6666~Gas [kWh]~20:40:60:80:100~10~7^2:00~7~6^4:00~6~7^6:00~0~7^8:00~5~1^10:00~1~10^12:00~5~6^14:00~8`
+
 
 ## Messages from Nextion Display
 

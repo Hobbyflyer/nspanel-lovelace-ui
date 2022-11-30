@@ -341,7 +341,7 @@ class LuiPagesGen(object):
         elif entityType == "input_text":
             entityTypePanel = "text"
             value = entity.state
-        elif entityType == "input_select":
+        elif entityType in ["input_select", "select"]:
             entityTypePanel = "input_sel"
             value = entity.state
         elif entityType == "vacuum":
@@ -501,7 +501,14 @@ class LuiPagesGen(object):
                     onoffbutton = 1374
                 else:
                     onoffbutton = rgb_dec565([255,152,0])
-            command = f"entityUpd~{heading}~{navigation}~{item}~{icon}~~{title}~~{author}~~{volume}~{iconplaypause}~{source}~{speakerlist[:200]}~{onoffbutton}~{mediaBtn}"
+            shuffleBtn = "disable"
+            if bits & 0b100000000000000:
+                shuffle = get_attr_safe(entity, "shuffle", "")
+                if shuffle == False:
+                    shuffleBtn = get_icon_id('shuffle-disabled')
+                elif shuffle == True:
+                    shuffleBtn = get_icon_id('shuffle')
+            command = f"entityUpd~{heading}~{navigation}~{item}~{icon}~~{title}~~{author}~~{volume}~{iconplaypause}~{source}~{speakerlist[:200]}~{onoffbutton}~{mediaBtn}~{shuffleBtn}"
         self._send_mqtt_msg(command)
         
     def generate_alarm_page(self, navigation, entity, overwrite_supported_modes, alarmBtn):
@@ -812,7 +819,7 @@ class LuiPagesGen(object):
         icon_color = 0
         ha_type = entity_id.split(".")[0]
         icon_color = self.get_entity_color(entity, ha_type=ha_type)
-        if ha_type == "input_select":
+        if ha_type in ["input_select", "select"]:
             options = entity.attributes.get("options", [])
         if ha_type == "light":
             options = entity.attributes.get("effect_list", [])[:15]

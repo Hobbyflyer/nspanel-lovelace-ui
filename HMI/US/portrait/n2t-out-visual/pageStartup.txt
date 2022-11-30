@@ -402,7 +402,7 @@ Text tVersion
         Horizontal Alignment                : center
         Vertical Alignment                  : center
         Input Type                          : character
-        Text                                : 44
+        Text                                : 45
         Max. Text Size                      : 10
         Word wrap                           : disabled
         Horizontal Spacing                  : 0
@@ -605,38 +605,43 @@ Timer tmSerial
                                         //we are going to exit this page with this command, so we have to clear the buffer, so we are not getting into a stupid loop ...
                                         udelete payloadLength-1
                                         bufferPos=0
-                                        if(tId.txt=="cardThermo")
+                                        if(tId.txt=="pageStartup")
                                         {
-                                            page cardThermo
+                                            page pageStartup
                                         }
                                         if(tId.txt=="screensaver")
                                         {
                                             page screensaver
+                                        }
+                                        if(tId.txt=="cardEntities")
+                                        {
+                                            page cardEntities
+                                        }
+                                        if(tId.txt=="cardGrid")
+                                        {
+                                            page cardGrid
                                         }
                                         if(tId.txt=="popupLight")
                                         {
                                             pageIcons.tTmp1.txt=tTmp.txt
                                             page popupLight
                                         }
-                                        if(tId.txt=="cardEntities")
+                                        if(tId.txt=="popupShutter")
                                         {
-                                            page cardEntities
-                                        }
-                                        if(tId.txt=="pageStartup")
-                                        {
-                                            page pageStartup
+                                            pageIcons.tTmp1.txt=tTmp.txt
+                                            page popupShutter
                                         }
                                         if(tId.txt=="popupNotify")
                                         {
                                             page popupNotify
                                         }
+                                        if(tId.txt=="cardThermo")
+                                        {
+                                            page cardThermo
+                                        }
                                         if(tId.txt=="cardMedia")
                                         {
                                             page cardMedia
-                                        }
-                                        if(tId.txt=="cardGrid")
-                                        {
-                                            page cardGrid
                                         }
                                         if(tId.txt=="cardAlarm")
                                         {
@@ -649,6 +654,10 @@ Timer tmSerial
                                         if(tId.txt=="cardPower")
                                         {
                                             page cardPower
+                                        }
+                                        if(tId.txt=="cardChart")
+                                        {
+                                            page cardChart
                                         }
                                     }
                                     // end of user code

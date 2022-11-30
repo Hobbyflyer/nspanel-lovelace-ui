@@ -326,6 +326,9 @@ class LuiController(object):
                 apis.ha_api.get_entity(entity_id).call_service("turn_on")
             else:
                 apis.ha_api.get_entity(entity_id).call_service("turn_off")
+        if button_type == "media-shuffle":
+            suffle = not apis.ha_api.get_entity(entity_id).attributes.shuffle
+            apis.ha_api.get_entity(entity_id).call_service("shuffle_set", shuffle=suffle)
         if button_type == "volumeSlider":
             pos = int(value)
             # HA wants this value between 0 and 1 as float

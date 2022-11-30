@@ -1,71 +1,151 @@
-+++ /dev/fd/62	2022-11-19 22:44:23.979739346 +0000
-+52 +306,47 @@
-+                                 spstr strCommand.txt,tTmp.txt,"~",2
-+                                 //save third arg if there's one
-+                                 spstr strCommand.txt,pageIcons.tTmp2.txt,"~",3
-+                                 spstr strCommand.txt,pageIcons.tTmp3.txt,"~",4
-+                                 //we are going to exit this page with this command, so we have to clear the buffer, so we are not getting into a stupid loop ...
-+                                 udelete payloadLength-1
-+                                 bufferPos=0
-+                                 if(tId.txt=="pageStartup")
-+                                 if(tId.txt=="cardThermo")
-+                                 {
-+                                     page pageStartup
-+                                     page cardThermo
-+                                 }
-+                                 if(tId.txt=="screensaver")
-+                                 {
-+                                     page screensaver
-+                                 }
-+                                 if(tId.txt=="cardEntities")
-+                                 {
-+                                     page cardEntities
-+                                 }
-+                                 if(tId.txt=="cardGrid")
-+                                 {
-+                                     page cardGrid
-+                                 }
-+                                 if(tId.txt=="popupLight")
-+                                 {
-+                                     pageIcons.tTmp1.txt=tTmp.txt
-+                                     page popupLight
-+                                 }
-+                                 if(tId.txt=="popupShutter")
-+                                 if(tId.txt=="cardEntities")
-+                                 {
-+                                     pageIcons.tTmp1.txt=tTmp.txt
-+                                     page popupShutter
-+                                     page cardEntities
-+                                 }
-+                                 if(tId.txt=="popupNotify")
-+                                 if(tId.txt=="pageStartup")
-+                                 {
-+                                     page popupNotify
-+                                     page pageStartup
-+                                 }
-+                                 if(tId.txt=="cardThermo")
-+                                 if(tId.txt=="popupNotify")
-+                                 {
-+                                     page cardThermo
-+                                     page popupNotify
-+                                 }
-+                                 if(tId.txt=="cardMedia")
-+                                 {
-+                                     page cardMedia
-+                                 }
-+                                 if(tId.txt=="cardGrid")
-+                                 {
-+                                     page cardGrid
-+                                 }
-+                                 if(tId.txt=="cardAlarm")
-+                                 {
-+                                     page cardAlarm
-+                                 }
-+                                 if(tId.txt=="cardQR")
-+                                 {
-+                                     page cardQR
-+reensaver.txt
-+25 +252,25 @@
++++ /dev/fd/62	2022-11-30 16:01:08.850583062 +0000
++I/n2t-out/Program.s.txt
+++ HMI/US/portrait/n2t-out/Program.s.txt
++I/n2t-out/cardChart.txt
+++ HMI/US/portrait/n2t-out/cardChart.txt
++16 +175,16 @@
++ Send Component ID                   : disabled
++ State                               : unpressed
++ Text                                : î³
++ Max. Text Size                      : 10
++
++nts
++ Touch Press Event
++     tSend.txt="event,buttonPress2,cardChart,"
++     if(bPrev.txt=="î")
++     tSend.txt="event,buttonPress2,cardPower,"
++     if(bNext.txt=="î")
++     {
++         tSend.txt+="bHome"
++     }else
++     {
++         tSend.txt+="bNext"
++     }
++     //send calc crc
++15 +207,15 @@
++ Send Component ID                   : disabled
++ State                               : unpressed
++ Text                                : î°
++ Max. Text Size                      : 10
++
++nts
++ Touch Press Event
++     tSend.txt="event,buttonPress2,cardChart,"
++     tSend.txt="event,buttonPress2,cardAlarm,"
++     if(bPrev.txt=="î¶")
++     {
++         tSend.txt+="bUp"
++     }else
++     {
++         tSend.txt+="bPrev"
++     }
++14 +309,25 @@
++         }
++     }else
++     {
++         vis x0,0
++         vaLast.val=-1
++     }
++ 
++ m1
++ributes
++ Scope                               : local
++ Dragging                            : 0
++ Disable release event after dragging: 0
++ Send Component ID                   : disabled
++
++nts
++ Touch Press Event
++     click bPrev,1
++ 
++ mSwipeNext
++ributes
++ Scope                               : local
++ Dragging                            : 0
++ Disable release event after dragging: 0
++ Send Component ID                   : disabled
++I/n2t-out/cardEntities.txt
+++ HMI/US/portrait/n2t-out/cardEntities.txt
++I/n2t-out/cardGrid.txt
+++ HMI/US/portrait/n2t-out/cardGrid.txt
++14 +609,18 @@
++     {
++         page popupLight
++     }
++     if(tTmp.txt=="fan")
++     {
++         page popupFan
++     }
++     if(tTmp.txt=="input_sel")
++     {
++         page popupInSel
++     }
++ 
++mSerial
++ributes
++ Scope      : local
++ Period (ms): 50
++ Enabled    : yes
++I/n2t-out/cardMedia.txt
+++ HMI/US/portrait/n2t-out/cardMedia.txt
++5 +15,14 @@
++     dim=dimValueNormal
++     vis p0,0
++     vis tSend,0
++     vis tInstruction,0
++     vis tTmp,0
++     vis tId,0
++     vis t5,0
++     vis tShuffle,0
++     vis bPrev,0
++     vis bNext,0
++     cardMedia.bco=defaultBcoColor
++     for(sys0=0;sys0<34;sys0++)
++     {
++         if(b[sys0].type==98||b[sys0].type==116)
++         {
++2 +45,20 @@
++
++e (string) strCommand
++ributes
++ Scope         : local
++ Text          : 
++ Max. Text Size: 750
++
++e (string) tId
++ributes
++ Scope         : local
++ Text          : 
++ Max. Text Size: 20
++
++e (string) tSend
++ributes
++ Scope         : local
++ Text          : 
++ Max. Text Size: 200
++
++e (string) tTmp
++ributes
++ Scope         : local
++ Text          : 
++ Max. Text Size: 10
++
++e (string) vaMenu
++ributes
++ Scope         : local
++ Text          : 
++ Max. Text Size: 50
++
++e (string) vaSpeakerList
++14 +295,24 @@
++         //send cmd
++         printh 55 bb
++         prints sys0,2
++         prints tSend.txt,0
++         prints crcval,2
++     }
++ 
++d
 +ributes
 + Scope                               : local
 + Dragging                            : 0
@@ -73,10 +153,58 @@
 + Send Component ID                   : disabled
 + Associated Keyboard                 : none
 + Text                                : 
-+ Max. Text Size                      : 10
-+ Max. Text Size                      : 5
++ Max. Text Size                      : 20
 +
-+con2
++nstruction
++ributes
++ Scope                               : local
++ Dragging                            : 0
++ Disable release event after dragging: 0
++ Send Component ID                   : disabled
++ Associated Keyboard                 : none
++81 +344,62 @@
++     crcputs tSend.txt,0
++     //send cmd
++     printh 55 bb
++     prints sys0,2
++     prints tSend.txt,0
++     prints crcval,2
++ 
++huffle
++peaker
++ributes
++ Scope                               : local
++ Dragging                            : 0
++ Disable release event after dragging: 0
++ Send Component ID                   : disabled
++ Associated Keyboard                 : none
++ Text                                : x
++ Max. Text Size                      : 10
++ Text                                : 
++ Max. Text Size                      : 50
++
++nts
++ Touch Press Event
++     // event,buttonPress2,entn,media-next
++     //craft command
++     tSend.txt="event,buttonPress2,"
++     tSend.txt+=entn.txt+","
++     tSend.txt+="media-shuffle"
++     tSend.txt+="speaker-sel,"+tSpeaker.txt
++     //send calc crc
++     btlen tSend.txt,sys0
++     crcrest 1,0xffff // reset CRC
++     crcputh 55 bb
++     crcputs sys0,2
++     crcputs tSend.txt,0
++     //send cmd
++     printh 55 bb
++     prints sys0,2
++     prints tSend.txt,0
++     prints crcval,2
++ 
++peaker
++itle
 +ributes
 + Scope                               : local
 + Dragging                            : 0
@@ -84,99 +212,195 @@
 + Send Component ID                   : disabled
 + Associated Keyboard                 : none
 + Text                                : 
-+ Max. Text Size                      : 10
-+ Max. Text Size                      : 5
++ Max. Text Size                      : 50
 +
-+R
++nts
++ Touch Press Event
++     // event,buttonPress2,entn,media-next
++     //craft command
++     tSend.txt="event,buttonPress2,"
++     tSend.txt+=entn.txt+","
++     tSend.txt+="speaker-sel,"+tSpeaker.txt
++     //send calc crc
++     btlen tSend.txt,sys0
++     crcrest 1,0xffff // reset CRC
++     crcputh 55 bb
++     crcputs sys0,2
++     crcputs tSend.txt,0
++     //send cmd
++     printh 55 bb
++     prints sys0,2
++     prints tSend.txt,0
++     prints crcval,2
++ 
++itle
++mp
 +ributes
 + Scope                               : local
 + Dragging                            : 0
 + Disable release event after dragging: 0
 + Send Component ID                   : disabled
-+16 +474,14 @@
-+                                 spstr pageIcons.vaTime.txt,tTime.txt,"?",0
-+                                 spstr pageIcons.vaTime.txt,tAMPM.txt,"?",1
-+                                 if(tAMPM.txt=="")
++ Associated Keyboard                 : none
++ Text                                : 
++ Max. Text Size                      : 50
++ Max. Text Size                      : 10
++
++ p0
++ributes
++ Scope                               : local
++ Dragging                            : 0
++ Disable release event after dragging: 0
++ Send Component ID                   : disabled
++24 +693,14 @@
++                                 }else
 +                                 {
-+                                     vis tAMPM,0
++                                     vis t5,1
++                                     covx tTmp.txt,t5.pco,0,0
 +                                 }
-+                                 spstr strCommand.txt,tTimeAdd.txt,"~",2
-+                                 ref tIcon1
-+                                 ref tIcon2
++                                 //tIconBtnEntityName
++                                 spstr strCommand.txt,vaMenu.txt,"~",15
++                                 // shuffel btn
++                                 spstr strCommand.txt,tTmp.txt,"~",16
++                                 if(tTmp.txt=="disable")
++                                 {
++                                     vis tShuffle,0
++                                 }else
++                                 {
++                                     vis tShuffle,1
++                                     tShuffle.txt=tTmp.txt
++                                 }
++                             }
++                             if(tInstruction.txt=="time")
++                             {
++                                 // get set time to global variable
++                                 spstr strCommand.txt,pageIcons.vaTime.txt,"~",1
 +                             }
 +                             if(tInstruction.txt=="date")
-+                             {
-+                                 //get set date to global variable
-+                                 spstr strCommand.txt,pageIcons.vaDate.txt,"~",1
-+                                 tDate.txt=pageIcons.vaDate.txt
++I/n2t-out/pageStartup.txt
+++ HMI/US/portrait/n2t-out/pageStartup.txt
++I/n2t-out/popupFan.txt
+++ HMI/US/portrait/n2t-out/popupFan.txt
++14 +619,18 @@
++                                 {
++                                     page cardQR
++                                 }
++                                 if(tId.txt=="cardPower")
++                                 {
++                                     page cardPower
++                                 }
++                                 if(tId.txt=="cardChart")
++                                 {
++                                     page cardChart
++                                 }
 +                             }
-+53 +689,48 @@
-+                                 spstr strCommand.txt,tId.txt,"~",1
-+                                 //save second arg if there's one
-+                                 spstr strCommand.txt,tTmp.txt,"~",2
-+                                 //save third arg if there's one
-+                                 spstr strCommand.txt,pageIcons.tTmp2.txt,"~",3
-+                                 spstr strCommand.txt,pageIcons.tTmp3.txt,"~",4
-+                                 //we are going to exit this page with this command, so we have to clear the buffer, so we are not getting into a stupid loop ...
-+                                 udelete payloadLength-1
-+                                 udelete u[2]+3
-+                                 bufferPos=0
-+                                 if(tId.txt=="pageStartup")
++                             // end of user code
++                             udelete payloadLength-1
++                             bufferPos=0
++                         }
++                     }
++                 }
++I/n2t-out/popupInSel.txt
+++ HMI/US/portrait/n2t-out/popupInSel.txt
++14 +893,18 @@
 +                                 {
-+                                     page pageStartup
++                                     page cardQR
 +                                 }
-+                                 if(tId.txt=="screensaver")
-+                                 if(tId.txt=="popupLight")
++                                 if(tId.txt=="cardPower")
 +                                 {
-+                                     page screensaver
-+                                     pageIcons.tTmp1.txt=tTmp.txt
-+                                     page popupLight
++                                     page cardPower
 +                                 }
-+                                 if(tId.txt=="cardEntities")
-+                                 if(tId.txt=="pageStartup")
++                                 if(tId.txt=="cardChart")
 +                                 {
-+                                     page cardEntities
-+                                     page pageStartup
++                                     page cardChart
 +                                 }
-+                                 if(tId.txt=="cardGrid")
-+                                 if(tId.txt=="cardThermo")
++                             }
++                             // end of user code
++                             udelete payloadLength-1
++                             bufferPos=0
++                         }
++                     }
++                 }
++I/n2t-out/popupLight.txt
+++ HMI/US/portrait/n2t-out/popupLight.txt
++14 +682,18 @@
 +                                 {
-+                                     page cardGrid
-+                                     page cardThermo
++                                     page cardQR
 +                                 }
-+                                 if(tId.txt=="popupLight")
-+                                 if(tId.txt=="cardMedia")
++                                 if(tId.txt=="cardPower")
 +                                 {
-+                                     pageIcons.tTmp1.txt=tTmp.txt
-+                                     page popupLight
-+                                     page cardMedia
++                                     page cardPower
 +                                 }
-+                                 if(tId.txt=="popupShutter")
-+                                 if(tId.txt=="pageStartup")
++                                 if(tId.txt=="cardChart")
 +                                 {
-+                                     pageIcons.tTmp1.txt=tTmp.txt
-+                                     page popupShutter
-+                                     page pageStartup
++                                     page cardChart
 +                                 }
-+                                 if(tId.txt=="popupNotify")
++                             }
++                             // end of user code
++                             udelete payloadLength-1
++                             bufferPos=0
++                         }
++                     }
++                 }
++I/n2t-out/popupNotify.txt
+++ HMI/US/portrait/n2t-out/popupNotify.txt
++14 +437,18 @@
 +                                 {
-+                                     page popupNotify
++                                     page cardQR
 +                                 }
-+                                 if(tId.txt=="cardThermo")
-+                                 if(tId.txt=="cardGrid")
++                                 if(tId.txt=="cardPower")
 +                                 {
-+                                     page cardThermo
-+                                     page cardGrid
++                                     page cardPower
 +                                 }
-+                                 if(tId.txt=="cardMedia")
-+                                 if(tId.txt=="cardEntities")
++                                 if(tId.txt=="cardChart")
 +                                 {
-+                                     page cardMedia
-+                                     page cardEntities
++                                     page cardChart
 +                                 }
-+                                 if(tId.txt=="cardAlarm")
++                             }
++                             // end of user code
++                             udelete payloadLength-1
++                             bufferPos=0
++                         }
++                     }
++                 }
++I/n2t-out/popupShutter.txt
+++ HMI/US/portrait/n2t-out/popupShutter.txt
++14 +671,18 @@
 +                                 {
-+                                     page cardAlarm
++                                     page cardQR
 +                                 }
-+                                 if(tId.txt=="cardQR")
++                                 if(tId.txt=="cardPower")
 +                                 {
++                                     page cardPower
++                                 }
++                                 if(tId.txt=="cardChart")
++                                 {
++                                     page cardChart
++                                 }
++                             }
++                             // end of user code
++                             udelete payloadLength-1
++                             bufferPos=0
++                         }
++                     }
++                 }
++I/n2t-out/popupThermo.txt
+++ HMI/US/portrait/n2t-out/popupThermo.txt
++14 +942,18 @@
++                                 {
++                                     page cardQR
++                                 }
++                                 if(tId.txt=="cardPower")
++                                 {
++                                     page cardPower
++                                 }
++                                 if(tId.txt=="cardChart")
++                                 {
++                                     page cardChart
++                                 }
++                             }
++                             // end of user code
++                             udelete payloadLength-1
++                             bufferPos=0
++                         }
++                     }
++                 }

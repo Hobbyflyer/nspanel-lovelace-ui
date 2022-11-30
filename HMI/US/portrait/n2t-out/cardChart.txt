@@ -1,0 +1,758 @@
+Page cardChart
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Locked                              : no
+        Swide up page ID                    : disabled
+        Swide down page ID                  : disabled
+        Swide left page ID                  : disabled
+        Swide right page ID                 : disabled
+    
+    Events
+        Preinitialize Event
+            dim=dimValueNormal
+            vis p0,0
+            vis tSend,0
+            vis tInstruction,0
+            vis tTmp,0
+            vis tId,0
+            vis bPrev,0
+            vis bNext,0
+            cardChart.bco=defaultBcoColor
+            vis x0,0
+            x0.bco=defaultBcoColor
+            x0.borderc=defaultBcoColor
+            for(sys0=0;sys0<32;sys0++)
+            {
+                if(b[sys0].type==98||b[sys0].type==116)
+                {
+                    b[sys0].bco=defaultBcoColor
+                    b[sys0].pco=defaultFontColor
+                }
+                if(b[sys0].type==53&&defaultBcoColor==6371)
+                {
+                    b[sys0].pic=1
+                    b[sys0].pic2=2
+                }
+                if(b[sys0].type==53&&defaultBcoColor==0)
+                {
+                    b[sys0].pic=10
+                    b[sys0].pic2=11
+                }
+            }
+        
+Variable (string) entn
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 80
+    
+Variable (string) strCommand
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 275
+    
+Variable (string) strTmp
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 200
+    
+Variable (string) tId
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 20
+    
+Variable (string) tInstruction
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 20
+    
+Variable (string) tSend
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 200
+    
+Variable (string) tTmp
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 20
+    
+Variable (int32) vMax
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vNValues
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vaBottom
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vaColorD
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vaColorL
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vaLast
+    Attributes
+        Scope: local
+        Value: 4294967295
+    
+Variable (int32) vaLeft
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vaUnit
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (int32) vaValue
+    Attributes
+        Scope: local
+        Value: 0
+    
+Variable (string) vaValues
+    Attributes
+        Scope         : local
+        Text          : 
+        Max. Text Size: 100
+    
+Variable (int32) vaYUnit
+    Attributes
+        Scope: local
+        Value: 0
+    
+XFloat x0
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Value                               : 0
+    
+Text tHeading
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        Associated Keyboard                 : none
+        Text                                : 
+        Max. Text Size                      : 40
+    
+Picture p0
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+Button bNext
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        State                               : unpressed
+        Text                                : î³
+        Max. Text Size                      : 10
+    
+    Events
+        Touch Press Event
+            tSend.txt="event,buttonPress2,cardPower,"
+            if(bNext.txt=="î")
+            {
+                tSend.txt+="bHome"
+            }else
+            {
+                tSend.txt+="bNext"
+            }
+            //send calc crc
+            btlen tSend.txt,sys0
+            crcrest 1,0xffff // reset CRC
+            crcputh 55 bb
+            crcputs sys0,2
+            crcputs tSend.txt,0
+            //send cmd
+            printh 55 bb
+            prints sys0,2
+            prints tSend.txt,0
+            prints crcval,2
+        
+Button bPrev
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+        State                               : unpressed
+        Text                                : î°
+        Max. Text Size                      : 10
+    
+    Events
+        Touch Press Event
+            tSend.txt="event,buttonPress2,cardAlarm,"
+            if(bPrev.txt=="î¶")
+            {
+                tSend.txt+="bUp"
+            }else
+            {
+                tSend.txt+="bPrev"
+            }
+            //send calc crc
+            btlen tSend.txt,sys0
+            crcrest 1,0xffff // reset CRC
+            crcputh 55 bb
+            crcputs sys0,2
+            crcputs tSend.txt,0
+            //send cmd
+            printh 55 bb
+            prints sys0,2
+            prints tSend.txt,0
+            prints crcval,2
+        
+Hotspot m0
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            if(vaLast.val>=0)
+            {
+                //  spstr vaValues.txt,tTmp.txt,"~",vaLast.val
+                //  covx tTmp.txt,vaValue.val,0,0
+                sys1=vaLast.val*5*vaUnit.val
+                sys1+=vaLeft.val
+                sya0=sys1/100
+                sya1=vaUnit.val*4+sys1/100
+                if(vaValue.val==0)
+                {
+                    line sya0,vaBottom.val,sya1,vaBottom.val,vaColorD.val
+                }else
+                {
+                    sys0=0
+                    if(vaValue.val<0)
+                    {
+                        vaValue.val*=-1
+                        sys0=1
+                    }
+                    fill sya0+1,-1*vaYUnit.val*vaValue.val+vaBottom.val+1,vaUnit.val*4/100,vaYUnit.val*vaValue.val-1,vaColorD.val
+                    //    line sya0+1,-10*vaValue.val+vaBottom.val,sya1-1,-10*vaValue.val+vaBottom.val,vaColorL.val
+                    draw sya0,-1*vaYUnit.val*vaValue.val+vaBottom.val+1,sya1,vaBottom.val,vaColorL.val
+                    if(sys0!=0)
+                    {
+                        sya1=-1*vaYUnit.val*vaValue.val+vaBottom.val
+                        for(sys0=vaBottom.val;sys0>=sya1;sys0-=10)
+                        {
+                            sys2=sys0-5
+                            if(sys2<sya1)
+                            {
+                                sys2=sya1
+                            }
+                            line vaUnit.val*2+sys1/100,sys0,vaUnit.val*2+sys1/100,sys2,vaColorL.val
+                        }
+                    }
+                }
+            }
+            sys0=tch0-m0.x-25-40*100/vaUnit.val
+            sys1=sys0%5
+            if(sys1<4&&sys0>=0)
+            {
+                vis x0,1
+                vaLast.val=sys0/5
+                // n0.val=sys0/5
+                spstr vaValues.txt,tTmp.txt,"~",vaLast.val
+                covx tTmp.txt,vaValue.val,0,0
+                // t0.txt=tTmp.txt
+                sys1=vaLast.val*5*vaUnit.val
+                sys1+=vaLeft.val
+                sya0=sys1/100
+                sya1=vaUnit.val*4+sys1/100
+                if(vaValue.val==0)
+                {
+                    line sya0,vaBottom.val,sya1,vaBottom.val,vaColorL.val
+                    x0.val=vaValue.val
+                }else
+                {
+                    if(vaValue.val<0)
+                    {
+                        fill sya0+1,vaYUnit.val*vaValue.val+vaBottom.val+1,vaUnit.val*4/100,-1*vaYUnit.val*vaValue.val-1,vaColorL.val
+                        x0.val=vaValue.val*-1
+                    }else
+                    {
+                        fill sya0+1,-1*vaYUnit.val*vaValue.val+vaBottom.val+1,vaUnit.val*4/100,vaYUnit.val*vaValue.val-1,vaColorL.val
+                        x0.val=vaValue.val
+                    }
+                }
+            }else
+            {
+                vis x0,0
+                vaLast.val=-1
+            }
+        
+Hotspot m1
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            click bPrev,1
+        
+Hotspot mSwipeNext
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            click bNext,1
+        
+Hotspot mSwipePrev
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            click bPrev,1
+        
+Hotspot mSwipeUp
+    Attributes
+        Scope                               : local
+        Dragging                            : 0
+        Disable release event after dragging: 0
+        Send Component ID                   : disabled
+    
+    Events
+        Touch Press Event
+            click bPrev,1
+        
+Timer tmSerial
+    Attributes
+        Scope      : local
+        Period (ms): 50
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            // data available
+            if(usize>1)
+            {
+                bufferPos=0
+                while(bufferPos<usize)
+                {
+                    // check for 0x55 0xBB - Command Init Secuence
+                    if(u[bufferPos]==187&&u[bufferPos-1]==85)
+                    {
+                        //remove garbage at the start of the buffer if there's any to free buffer for command
+                        if(u[bufferPos]!=1)
+                        {
+                            udelete bufferPos-1
+                        }
+                        //instruction is now aligned with buffer, because we deleted garbage before instrcution
+                        //get length after init sequence (check if there are more than to bytes in buffer)
+                        if(3<usize)
+                        {
+                            // check if serial buffer has reached the announced length
+                            ucopy payloadLength,2,2,0
+                            // we are only checking payload length so we have to skip first 3 bytes (init+payload length) (-1 because of < instead of <=)
+                            payloadLength+=3
+                            // payload length does also not contain crc, so we are adding another 2 bytes for crc
+                            payloadLength+=2
+                            if(payloadLength<usize)
+                            {
+                                // calculate crc
+                                crcrest 1,0xFFFF
+                                // u[2] contains payload legth at 3rd pos in buffer, we are calculating crc from 3rd pos with number of bytes from payload length
+                                //crcputu 3,u[2]
+                                // u[2] cotnains payload length, we are calculating a crc over the whole message, so we have to add 3 to the length from u[2]
+                                crcputu 0,payloadLength-1
+                                // get recived crc to be able to compare it
+                                ucopy recvCrc,payloadLength-1,2,0
+                                // compare crc with recived value
+                                if(crcval==recvCrc)
+                                {
+                                    // crc is okay
+                                    // here is the location where acual code should be
+                                    ucopy strCommand.txt,4,payloadLength-5,0
+                                    // write instruction to tInstuction (debug output, but used as variable here, ui elements will be disabled by default)
+                                    spstr strCommand.txt,tInstruction.txt,"~",0
+                                    if(tInstruction.txt=="entityUpd")
+                                    {
+                                        spstr strCommand.txt,tHeading.txt,"~",1
+                                        // navigation icons
+                                        spstr strCommand.txt,tId.txt,"~",2
+                                        spstr tId.txt,tTmp.txt,"|",0
+                                        if(tTmp.txt=="0")
+                                        {
+                                            vis bPrev,0
+                                            tsw mSwipePrev,0
+                                            tsw mSwipeUp,0
+                                        }
+                                        if(tTmp.txt=="1")
+                                        {
+                                            vis bPrev,1
+                                            tsw mSwipePrev,1
+                                            tsw mSwipeUp,0
+                                            bPrev.txt="î°"
+                                        }
+                                        if(tTmp.txt=="2")
+                                        {
+                                            vis bPrev,1
+                                            tsw mSwipePrev,0
+                                            tsw mSwipeUp,1
+                                            bPrev.txt="î¶"
+                                        }
+                                        spstr tId.txt,tTmp.txt,"|",1
+                                        if(tTmp.txt=="0")
+                                        {
+                                            vis bNext,0
+                                            tsw mSwipeNext,0
+                                        }
+                                        if(tTmp.txt=="1")
+                                        {
+                                            vis bNext,1
+                                            tsw mSwipeNext,1
+                                            bNext.txt="î³"
+                                        }
+                                        if(tTmp.txt=="2")
+                                        {
+                                            vis bNext,1
+                                            bNext.txt="î"
+                                        }
+                                        // extract color
+                                        spstr strCommand.txt,tTmp.txt,"~",3
+                                        covx tTmp.txt,vaColorL.val,0,0
+                                        // prepare dark color
+                                        sys0=vaColorL.val>>11 // red
+                                        vaColorD.val=sys0*8/10<<11 // store and shift
+                                        sys0=vaColorL.val>>5%64 // green
+                                        vaColorD.val=sys0*8/10<<5+vaColorD.val // store and shift
+                                        sys0=vaColorL.val%32
+                                        vaColorD.val=sys0*8/10+vaColorD.val // store and add
+                                        //
+                                        // detect nValues and maxValue
+                                        vNValues.val=0
+                                        spstr strCommand.txt,tTmp.txt,"~",vNValues.val+6
+                                        strlen tTmp.txt,sya0
+                                        while(sya0>0)
+                                        {
+                                            covx tTmp.txt,sya1,0,0
+                                            if(sya1>vMax.val)
+                                            {
+                                                vMax.val=sya1
+                                            }
+                                            // next
+                                            vNValues.val++
+                                            spstr strCommand.txt,tTmp.txt,"~",vNValues.val+6
+                                            strlen tTmp.txt,sya0
+                                        }
+                                        //
+                                        // calculate unit width
+                                        sys0=vNValues.val*4
+                                        sys0+=vNValues.val-1
+                                        vaUnit.val=m0.w-25-40*100
+                                        vaUnit.val/=sys0
+                                        vaBottom.val=m0.y+m0.h-24
+                                        vaLeft.val=m0.x+25+40*100
+                                        vaYUnit.val=m0.h-24/vMax.val
+                                        //
+                                        line m0.x+25+40-10,m0.y,m0.x+25+40-10,vaBottom.val+10,14823
+                                        line m0.x+25+40-5,vaBottom.val,m0.x+25+40-15,vaBottom.val,14823
+                                        spstr strCommand.txt,strTmp.txt,"~",5
+                                        sya1=0
+                                        spstr strTmp.txt,tTmp.txt,":",sya1
+                                        strlen tTmp.txt,sya0
+                                        while(sya0>0)
+                                        {
+                                            covx tTmp.txt,sys1,0,0
+                                            if(sys1<=vMax.val)
+                                            {
+                                                line m0.x+25+40-5,-1*vaYUnit.val*sys1+vaBottom.val,m0.x+25+40-15,-1*vaYUnit.val*sys1+vaBottom.val,14823
+                                                sys2=sys1%10
+                                                sys1/=10
+                                                if(sys1>0)
+                                                {
+                                                    covx sys1,tTmp.txt,0,0
+                                                }else
+                                                {
+                                                    tTmp.txt=""
+                                                }
+                                                if(sys2!=0)
+                                                {
+                                                    covx sys2,tId.txt,0,0
+                                                    tTmp.txt=tTmp.txt+"."+tId.txt
+                                                }
+                                                xstr m0.x+28,sys1*10+sys2*-1*vaYUnit.val+vaBottom.val-10,20,20,0,defaultFontColor,RED,2,1,3,tTmp.txt
+                                            }
+                                            // next
+                                            sya1++
+                                            spstr strTmp.txt,tTmp.txt,":",sya1
+                                            strlen tTmp.txt,sya0
+                                        }
+                                        //
+                                        // y achis label
+                                        spstr strCommand.txt,tTmp.txt,"~",4
+                                        // tTmp.txt="Gas [kW]"
+                                        strlen tTmp.txt,sys1
+                                        sya1=sys1*12+m0.h-48/2
+                                        for(sys0=0;sys0<sys1;sys0++)
+                                        {
+                                            substr tTmp.txt,strTmp.txt,sys0,1
+                                            xstr m0.x,sys0*-12+m0.y+sya1,30,20,6,defaultFontColor,RED,2,1,3,strTmp.txt
+                                        }
+                                        for(sys0=0;sys0<vNValues.val;sys0++)
+                                        {
+                                            if(sys0>0)
+                                            {
+                                                vaValues.txt+="~"
+                                            }
+                                            // extract next entry
+                                            spstr strCommand.txt,tTmp.txt,"~",sys0+6
+                                            // calculate left
+                                            sys1=sys0*5*vaUnit.val
+                                            sys1+=vaLeft.val
+                                            // if there is a colon in the obtained value we have a label/and gridline
+                                            spstr tTmp.txt,strTmp.txt,"^",1
+                                            strlen strTmp.txt,sya0
+                                            if(sya0>0)
+                                            {
+                                                // we have a label!!!
+                                                // -> extract label
+                                                sys2=vaUnit.val*2+sys1/100
+                                                // draw label
+                                                xstr sya0*-6+sys2,vaBottom.val+2,sya0*12,22,0,defaultFontColor,defaultBcoColor,1,1,3,strTmp.txt
+                                                // draw line
+                                                // line sys2,vaBottom.val,sys2,m0.y,defaultFontColor
+                                                sya1=1
+                                                //spstr tTmp.txt,strTmp.txt,":",0
+                                                spstr tTmp.txt,tTmp.txt,":",0
+                                                vaValues.txt+="-"
+                                            }else
+                                            {
+                                                sya1=0
+                                            }
+                                            vaValues.txt+=tTmp.txt
+                                            covx tTmp.txt,vaValue.val,0,0
+                                            sya0=sys1/100
+                                            if(vaValue.val==0)
+                                            {
+                                                line sya0,vaBottom.val,vaUnit.val*4+sys1/100,vaBottom.val,vaColorD.val
+                                            }else
+                                            {
+                                                fill sya0+1,-1*vaYUnit.val*vaValue.val+vaBottom.val+1,vaUnit.val*4/100,vaYUnit.val*vaValue.val-1,vaColorD.val
+                                                line sya0+1,-1*vaYUnit.val*vaValue.val+vaBottom.val,vaUnit.val*4+sys1/100-1,-1*vaYUnit.val*vaValue.val+vaBottom.val,vaColorL.val
+                                                draw sya0,-1*vaYUnit.val*vaValue.val+vaBottom.val+1,vaUnit.val*4+sys1/100,vaBottom.val,vaColorL.val
+                                            }
+                                            if(sya1>0)
+                                            {
+                                                sya1=-1*vaYUnit.val*vaValue.val+vaBottom.val
+                                                for(sya0=vaBottom.val-5;sya0>m0.y;sya0-=10)
+                                                {
+                                                    sys1=sya0+5
+                                                    if(sya0>=sya1)
+                                                    {
+                                                        line sys2,sya0,sys2,sys1,vaColorL.val
+                                                    }else
+                                                    {
+                                                        if(sys1>=sya1)
+                                                        {
+                                                            line sys2,sya0,sys2,sya1-1,14823
+                                                            line sys2,sya1,sys2,sys1,vaColorL.val
+                                                        }else
+                                                        {
+                                                            line sys2,sya0,sys2,sys1,14823
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if(tInstruction.txt=="time")
+                                    {
+                                        // get set time to global variable
+                                        spstr strCommand.txt,pageIcons.vaTime.txt,"~",1
+                                    }
+                                    if(tInstruction.txt=="date")
+                                    {
+                                        // get set date to global variable
+                                        spstr strCommand.txt,pageIcons.vaDate.txt,"~",1
+                                    }
+                                    if(tInstruction.txt=="dimmode")
+                                    {
+                                        // get value
+                                        spstr strCommand.txt,tTmp.txt,"~",1
+                                        covx tTmp.txt,dimValue,0,0
+                                        // get value normal
+                                        spstr strCommand.txt,tTmp.txt,"~",2
+                                        covx tTmp.txt,dimValueNormal,0,0
+                                        dim=dimValueNormal
+                                        // get background color
+                                        spstr strCommand.txt,tTmp.txt,"~",3
+                                        if(tTmp.txt!="")
+                                        {
+                                            covx tTmp.txt,defaultBcoColor,0,0
+                                        }
+                                        // get font color
+                                        spstr strCommand.txt,tTmp.txt,"~",4
+                                        if(tTmp.txt!="")
+                                        {
+                                            covx tTmp.txt,defaultFontColor,0,0
+                                        }
+                                    }
+                                    if(tInstruction.txt=="timeout")
+                                    {
+                                        //set timeout to global var
+                                        spstr strCommand.txt,tTmp.txt,"~",1
+                                        covx tTmp.txt,sleepTimeout,0,0
+                                    }
+                                    if(tInstruction.txt=="pageType")
+                                    {
+                                        sleepValue=0
+                                        //command format pageType,specialPageName
+                                        //write name of speical page to tId
+                                        spstr strCommand.txt,tId.txt,"~",1
+                                        //save second arg if there's one
+                                        spstr strCommand.txt,tTmp.txt,"~",2
+                                        //save third arg if there's one
+                                        spstr strCommand.txt,pageIcons.tTmp2.txt,"~",3
+                                        spstr strCommand.txt,pageIcons.tTmp3.txt,"~",4
+                                        //we are going to exit this page with this command, so we have to clear the buffer, so we are not getting into a stupid loop ...
+                                        udelete payloadLength-1
+                                        bufferPos=0
+                                        if(tId.txt=="pageStartup")
+                                        {
+                                            page pageStartup
+                                        }
+                                        if(tId.txt=="screensaver")
+                                        {
+                                            page screensaver
+                                        }
+                                        if(tId.txt=="cardEntities")
+                                        {
+                                            page cardEntities
+                                        }
+                                        if(tId.txt=="cardGrid")
+                                        {
+                                            page cardGrid
+                                        }
+                                        if(tId.txt=="popupLight")
+                                        {
+                                            pageIcons.tTmp1.txt=tTmp.txt
+                                            page popupLight
+                                        }
+                                        if(tId.txt=="popupShutter")
+                                        {
+                                            pageIcons.tTmp1.txt=tTmp.txt
+                                            page popupShutter
+                                        }
+                                        if(tId.txt=="popupNotify")
+                                        {
+                                            page popupNotify
+                                        }
+                                        if(tId.txt=="cardThermo")
+                                        {
+                                            page cardThermo
+                                        }
+                                        if(tId.txt=="cardMedia")
+                                        {
+                                            page cardMedia
+                                        }
+                                        if(tId.txt=="cardAlarm")
+                                        {
+                                            page cardAlarm
+                                        }
+                                        if(tId.txt=="cardQR")
+                                        {
+                                            page cardQR
+                                        }
+                                        if(tId.txt=="cardPower")
+                                        {
+                                            page cardPower
+                                        }
+                                        if(tId.txt=="cardChart")
+                                        {
+                                            page cardChart
+                                        }
+                                    }
+                                    // end of user code
+                                    udelete payloadLength-1
+                                    bufferPos=0
+                                }
+                            }
+                        }
+                    }
+                    // next character
+                    bufferPos++
+                }
+            }
+        
+Timer tmSleep
+    Attributes
+        Scope      : local
+        Period (ms): 1000
+        Enabled    : yes
+    
+    Events
+        Timer Event
+            if(sleepTimeout!=0&&dimValue!=dim)
+            {
+                sleepValue+=1
+                if(sleepTimeout<=sleepValue)
+                {
+                    sleepValue=0
+                    dim=dimValue
+                    tSend.txt="event,sleepReached,cardAlarm"
+                    //send calc crc
+                    btlen tSend.txt,sys0
+                    crcrest 1,0xffff // reset CRC
+                    crcputh 55 bb
+                    crcputs sys0,2
+                    crcputs tSend.txt,0
+                    //send cmd
+                    printh 55 bb
+                    prints sys0,2
+                    prints tSend.txt,0
+                    prints crcval,2
+                }
+            }
+        
+TouchCap tc0
+    Attributes
+        Scope: local
+        Value: 0
+    
+    Events
+        Touch Press Event
+            sleepValue=0
+        
