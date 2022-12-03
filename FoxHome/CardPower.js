@@ -1,6 +1,7 @@
 // Description:
 //  Creates JSON String for NSPanel CardPower
-//  Date : 20.11.2022
+//  Author: Thorsten Böttcher (Hobbyflyer) 
+//  Date : 30.11.2022
 //
 //  { 
 //  "id": 1,                          top left 0 (down) top right 3 (down)                 
@@ -19,13 +20,13 @@ let Debug=false;
 // define Datapoints
 var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';
 var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';
-var Batt_Temp      = 'senec.0.TEMPMEASURE.BATTERY_TEMP';
+var Batt_Temp      = 'alias.0.logging.Energy.PV_BAT_TEMP_Combined.ACTUAL';
 var Batt_Health    =  ['senec.0.BMS.SOH.0','senec.0.BMS.SOH.1'];
-var SolarEnergy    = 'alias.0.logging.Energy.SOLAR_ENERGY.ACTUAL';
-var BKWEnergy      = 'alias.0.logging.Energy.BKW_energy.ACTUAL';
-var HouseEnergy    = 'alias.0.logging.Energy.House_Energy.ACTUAL';
-var GridEnergy     = 'alias.0.logging.Energy.GRID_ENERGY.ACTUAL';
-var CarEnergy      = 'alias.0.logging.Energy.Car_Energy.ACTUAL';
+var SolarEnergy    = 'alias.0.logging.Energy.PWR-Solar.ACTUAL';
+var BKWEnergy      = 'alias.0.logging.Energy.PWR-SolarBKW.ACTUAL';
+var HouseEnergy    = 'alias.0.logging.Energy.PWR-Haus.ACTUAL';
+var GridEnergy     = 'alias.0.logging.Energy.PWR-Grid.ACTUAL';
+var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';
 var DPJSON         = '0_userdata.0.PVPower';
 var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy];
 

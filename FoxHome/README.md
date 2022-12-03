@@ -14,9 +14,8 @@
 
 ## Step 1: Flash & Config NSPanel (1)
 
-
 ### Flash Tasmota32-nspanel (2)
-http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin
+[Tasmota-NSPanel](http://ota.tasmota.com/tasmota32/release/tasmota32-nspanel.bin)
 https://tasmota.github.io/install/
 
 NSPanel.tft in this Folder is for NX4832K035_011 
@@ -25,6 +24,7 @@ NSPanel.tft in this Folder is for NX4832K035_011
 ```code
 {"NAME":"NSPanel","GPIO":[0,0,0,0,3872,0,0,0,0,0,32,0,0,0,0,225,0,480,224,1,0,0,0,33,0,0,0,0,0,0,0,0,0,0,4736,0],"FLAG":0,"BASE":1,"CMND":"ADCParam 2,11200,10000,3950 | Sleep 0 | BuzzerPWM 1"}`
 ```
+Activate Config
 
 ## Show ESP Temperature
 ```
@@ -36,7 +36,26 @@ SetOption146 1
 SetOption73 1
 ```
 
+### Step 3 Install / Update Berry Driver
+```code
+Backlog UpdateDriverVersion https://raw.githubusercontent.com/joBr99/nspanel-lovelace-ui/main/tasmota/autoexec.be; Restart 1
+```
+
+### Step 4 Flash HMI
+FlashNextion ...
+
+
+## Tasmota
+Internal Tempsensor
+[DOC MQTT](https://tasmota.github.io/docs/MQTT/#subscribe)
+```code
+Rule2 ON ANALOG#Temperature1!=%Var1% DO backlog publish %topic%/stat/Temperature %value%; Var1 %value% ENDON
+```
+
+
 ## CardPower Script
+
+[RGB565](https://nodtem66.github.io/nextion-hmi-color-convert/index.html)
 
 Colors:<br>
 Colors from NSPalnelts.ts <bold>Dynamische Indikatoren</bold><br>
