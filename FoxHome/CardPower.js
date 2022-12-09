@@ -1,7 +1,7 @@
 // Description:
 //  Creates JSON String for NSPanel CardPower
 //  Author: Thorsten Böttcher (Hobbyflyer) 
-//  Date : 30.11.2022
+//  Date : 09.12.2022
 //
 //  { 
 //  "id": 1,                          top left 0 (down) top right 3 (down)                 
@@ -30,8 +30,8 @@ var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';              // Wa
 var DPJSON         = '0_userdata.0.PVPower';                               // Datenpunkt CardPower 
 var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy]; // array mit Datempunkten die überwacht werden sollen
 
-var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];                           // einheiten der Werte 
-var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];                     // Maxvalues zum Berechnen der farbe des Icons    
+var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];                           // Einheiten der Werte 
+var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];                     // Maxvalues zum Berechnen der Farbe des Icons    
 var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];             // laut WIKI nicht genutzt 
 var iconString = ['battery', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car']; // Initial Icons
 var CardpowerHeader ='Energiefluss';                                        // Überschrift der Card zur Identifizierung der angezeigten Seite
