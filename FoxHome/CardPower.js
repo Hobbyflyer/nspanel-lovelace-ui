@@ -18,26 +18,26 @@
 let Debug=false;
 
 // define Datapoints
-var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';
-var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';
-var Batt_Temp      = 'alias.0.logging.Energy.PV_BAT_TEMP_Combined.ACTUAL';
-var Batt_Health    =  ['senec.0.BMS.SOH.0','senec.0.BMS.SOH.1'];
-var SolarEnergy    = 'alias.0.logging.Energy.PWR-Solar.ACTUAL';
-var BKWEnergy      = 'alias.0.logging.Energy.PWR-SolarBKW.ACTUAL';
-var HouseEnergy    = 'alias.0.logging.Energy.PWR-Haus.ACTUAL';
-var GridEnergy     = 'alias.0.logging.Energy.PWR-Grid.ACTUAL';
-var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';
-var DPJSON         = '0_userdata.0.PVPower';
-var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy];
+var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';     // lade / entladerate des Speichers in W
+var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';         // füllstand des Speichers in %
+var Batt_Temp      = 'alias.0.logging.Energy.PV_BAT_TEMP_Combined.ACTUAL'; // Batterietemperatur
+var Batt_Health    =  ['senec.0.BMS.SOH.0','senec.0.BMS.SOH.1'];           // Array aus Gesundheitszustand der Akkus  
+var SolarEnergy    = 'alias.0.logging.Energy.PWR-Solar.ACTUAL';            // Ertrag Solar 1
+var BKWEnergy      = 'alias.0.logging.Energy.PWR-SolarBKW.ACTUAL';         // Ertrag Solar 2
+var HouseEnergy    = 'alias.0.logging.Energy.PWR-Haus.ACTUAL';             // Hausverbrauch
+var GridEnergy     = 'alias.0.logging.Energy.PWR-Grid.ACTUAL';             // Bezug / Einspeisung Netz
+var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';              // WallBox
+var DPJSON         = '0_userdata.0.PVPower';                               // Datenpunkt CardPower 
+var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy]; // array mit Datempunkten die überwacht werden sollen
 
-var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];
-var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];
-var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];
-var iconString = ['battery', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car'];
-var CardpowerHeader ='Energiefluss';
+var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];                           // einheiten der Werte 
+var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];                     // Maxvalues zum Berechnen der farbe des Icons    
+var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];             // laut WIKI nicht genutzt 
+var iconString = ['battery', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car']; // Initial Icons
+var CardpowerHeader ='Energiefluss';                                        // Überschrift der Card zur Identifizierung der angezeigten Seite
 // CustomSend DataPoints for dynamic updating screen
-var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];
-var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage'];
+var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];   /// CustomSend Datenpunkte der Panesl 
+var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage']; // note used
        
 
 // ******************************************************************+
@@ -79,10 +79,10 @@ on({id: watch, change: "any"}, async function (obj) {
   //for each icon collect values
   for (var i_index in dpValues) {
     // calculate iconspeed
-    var speed =parseInt(Math.round( (10* dpValues[i_index]) / dpValuesMax[i_index] ));  
+    var speed =Math.round( (10* dpValues[i_index]) / dpValuesMax[i_index] );  
     
     //Batt icon color depends on AccuLevel   
-    if (i_index == 0) 
+    if (i_index == "0") 
       // check healtyness of Battery 
       if (getState(Batt_Temp).val > 35 || getState(Batt_Health[0]).val < 97 || getState(Batt_Health[1]).val <97 )
       {
@@ -110,17 +110,18 @@ on({id: watch, change: "any"}, async function (obj) {
           iconString[0]="battery";
       }
    
-    if(i_index == 1 || i_index == 2)
+    var idx= parseInt(i_index);
+    if(idx == 1 || idx == 2)
       {
-        iconColor = parseInt(10 - Math.round((10 * dpValues[i_index]) / dpValuesMax[i_index])) ;    
+        iconColor = 10 - Math.round((10 * dpValues[idx]) / dpValuesMax[idx]) ;    
       }
 
-    if(i_index == 3)
+    if(idx == 3)
       {
-        iconColor = parseInt(Math.round((10 * dpValues[i_index]) / dpValuesMax[i_index])) ;    
+        iconColor = Math.round((10 * dpValues[idx]) / dpValuesMax[idx]) ;    
       }
 
-    if (i_index == 4)
+    if (idx == 4)
       {  
         speed = speed * -1; //invert direction
       }
@@ -133,7 +134,7 @@ on({id: watch, change: "any"}, async function (obj) {
              ', \"icon\": \"' + iconString[i_index] +'\"' +
              ', \"iconColor\": ' + iconColor +
              ', \"speed\": ' + speed + '}';
-    if (i_index < 5)
+    if (idx < 5)
          Item= Item + ','; 
     outJSON = String(outJSON) + Item;
 
