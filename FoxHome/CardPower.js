@@ -13,11 +13,14 @@
 //  "speed": -3                       animation speed & direction
 //  }
 //
+// Icons unter: https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html
+
 
 // define debug= true for console output 
 let Debug=false;
 
-// define Datapoints .... 21 - 40 müssen angepasst werden
+// define Datapoints .... 21 - 40 müssen angepasst werden 
+// Aliase vom Typ INFO oder direkt auf das Objekt gehen
 var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';     // Lade- / Entladerate des Speichers in W  Item 1(lo) Value
 var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';         // Füllstand des Speichers in %            Item 1(lo) icon OR "null"
 var Batt_Temp      = 'alias.0.logging.Energy.PV_BAT_TEMP_Combined.ACTUAL'; // Batterietemperatur                      Item 1(lo) icon or "null"
@@ -30,7 +33,7 @@ var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';              // Wa
 var DPJSON         = '0_userdata.0.PVPower';                               // Datenpunkt CardPower               
 // Für die dynamische Aktualisierung werden Datenpunkte auf Änderung überwacht
 // Hier das Array ggf. anpassen
-var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy]; // array mit Datempunkten die überwacht werden sollen
+var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy,CarEnergy]; // array mit Datempunkten die überwacht werden sollen
 var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];                           // einheiten der Werte 
 var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];                     // Maxvalues zum Berechnen der farbe des Icons    
 var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];             // laut WIKI nicht genutzt 
@@ -41,7 +44,27 @@ var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.Custom
 //var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage']; // note used
        
 
-// ******************************************************************+
+// ******************************************************************
+// Check Datapoints
+getState(Batt_DisCharge,handleerror);
+getState(Batt_DisCharge,handleerror);
+getState(SolarEnergy,handleerror);
+getState(BKWEnergy,handleerror);
+getState(HouseEnergy,handleerror);
+getState(GridEnergy,handleerror);
+getState(CarEnergy,handleerror);
+getState(DPJSON,handleerror);
+       
+function handleerror (err, state) {
+  if (state != null) {
+    console.log("sub :" + state.val);
+  }
+  if (err) {
+    console.log(err.message);
+  }
+}
+
+// ******************************************************************
 
 // color definition according to NSPanelts.ts "Dynamische Indikatoren"
 let color0 = { red:   99, green: 190, blue: 123 };
@@ -163,7 +186,7 @@ on({id: watch, change: "any"}, async function (obj) {
       
   if (Debug) {
     console.log(outJSON);
-    console.log(outCustomSend);     
+    console.log(outCustomSend);
   }
 });
 
