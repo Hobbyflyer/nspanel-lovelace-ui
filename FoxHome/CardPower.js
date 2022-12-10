@@ -163,6 +163,7 @@ on({id: watch, change: "any"}, async function (obj) {
       
   if (Debug) {
     console.log(outJSON);
+    console.log(outCustomSend);     
   }
 });
 
