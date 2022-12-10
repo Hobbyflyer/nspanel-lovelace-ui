@@ -162,7 +162,7 @@ class LuiController(object):
             apis.ha_api.log(f"Callback Entity is on current page: {entity}", level="DEBUG")
             self._pages_gen.render_card(self._current_card, send_page_type=False)
             # send detail page update, just in case
-            if self._current_card.cardType in ["cardGrid", "cardEntities"]:
+            if self._current_card.cardType in ["cardGrid", "cardEntities", "cardMedia"]:
                 if entity.startswith("light"):
                     self._pages_gen.generate_light_detail_page(entity)
                 if entity.startswith("cover"):
@@ -170,6 +170,8 @@ class LuiController(object):
                 if entity.startswith("fan"):
                     self._pages_gen.generate_fan_detail_page(entity)
                 if entity.startswith("input_select"):
+                    self._pages_gen.generate_input_select_detail_page(entity)
+                if entity.startswith("media_player"):
                     self._pages_gen.generate_input_select_detail_page(entity)
             if self._current_card.cardType == "cardThermo":
                 if entity.startswith("climate"):
@@ -228,7 +230,14 @@ class LuiController(object):
             else:
                 self._current_card = self._config.getCard(0)
             self._pages_gen.render_card(self._current_card)
-
+        if button_type == "bHome":
+            if self._previous_cards:
+                self._current_card = self._previous_cards[0]
+                self._previous_cards.clear()
+            else:
+                self._current_card = self._config.getCard(0)
+            self._pages_gen.render_card(self._current_card)
+            
         if button_type == "bNext":
             card = self._config.getCard(self._current_card.pos+1)
             self._current_card = card
@@ -402,3 +411,7 @@ class LuiController(object):
             option = entity.attributes.effect_list[int(value)]
             entity.call_service("select_effect", option=option)
             
+        if button_type == "mode-media_player":
+            entity = apis.ha_api.get_entity(entity_id)
+            option = entity.attributes.source_list[int(value)]
+            entity.call_service("select_source", source=option)
