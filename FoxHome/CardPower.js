@@ -1,7 +1,7 @@
 // Description:
 //  Creates JSON String for NSPanel CardPower
 //  Author: Thorsten Böttcher (Hobbyflyer) 
-//  Date : 09.12.2022
+//  Date : 10.12.2022
 //
 //  { 
 //  "id": 1,                          top left 0 (down) top right 3 (down)                 
@@ -17,27 +17,28 @@
 // define debug= true for console output 
 let Debug=false;
 
-// define Datapoints
-var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';     // lade / entladerate des Speichers in W
-var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';         // füllstand des Speichers in %
-var Batt_Temp      = 'alias.0.logging.Energy.PV_BAT_TEMP_Combined.ACTUAL'; // Batterietemperatur
-var Batt_Health    =  ['senec.0.BMS.SOH.0','senec.0.BMS.SOH.1'];           // Array aus Gesundheitszustand der Akkus  
-var SolarEnergy    = 'alias.0.logging.Energy.PWR-Solar.ACTUAL';            // Ertrag Solar 1
-var BKWEnergy      = 'alias.0.logging.Energy.PWR-SolarBKW.ACTUAL';         // Ertrag Solar 2
-var HouseEnergy    = 'alias.0.logging.Energy.PWR-Haus.ACTUAL';             // Hausverbrauch
-var GridEnergy     = 'alias.0.logging.Energy.PWR-Grid.ACTUAL';             // Bezug / Einspeisung Netz
-var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';              // WallBox
-var DPJSON         = '0_userdata.0.PVPower';                               // Datenpunkt CardPower 
+// define Datapoints .... 21 - 40 müssen angepasst werden
+var Batt_DisCharge = 'alias.0.logging.Energy.PV_BAT_DisCharge.ACTUAL';     // Lade- / Entladerate des Speichers in W  Item 1(lo) Value
+var Batt_AkkuLevel = 'alias.0.logging.Energy.PV_BAT_Level.ACTUAL';         // Füllstand des Speichers in %            Item 1(lo) icon OR "null"
+var Batt_Temp      = 'alias.0.logging.Energy.PV_BAT_TEMP_Combined.ACTUAL'; // Batterietemperatur                      Item 1(lo) icon or "null"
+var Batt_Health    = ['senec.0.BMS.SOH.0','senec.0.BMS.SOH.1'];            // Array aus Gesundheitszustand der Akkus  Item 1(lo) icon or "[null]" 
+var SolarEnergy    = 'alias.0.logging.Energy.PWR-Solar.ACTUAL';            // Ertrag Solar 1                          Item 2(lm) Value
+var BKWEnergy      = 'alias.0.logging.Energy.PWR-SolarBKW.ACTUAL';         // Ertrag Solar 2                          Item 3(lu) Value
+var HouseEnergy    = 'alias.0.logging.Energy.PWR-Haus.ACTUAL';             // Hausverbrauch                           Item 4(ro) Value
+var GridEnergy     = 'alias.0.logging.Energy.PWR-Grid.ACTUAL';             // Bezug / Einspeisung Netz                Item 4(rm) Value
+var CarEnergy      = 'alias.0.logging.Energy.PWR-Car.ACTUAL';              // WallBox                                 Item 4(ru) Value
+var DPJSON         = '0_userdata.0.PVPower';                               // Datenpunkt CardPower               
+// Für die dynamische Aktualisierung werden Datenpunkte auf Änderung überwacht
+// Hier das Array ggf. anpassen
 var watch          = [Batt_DisCharge, SolarEnergy, BKWEnergy, HouseEnergy, GridEnergy]; // array mit Datempunkten die überwacht werden sollen
-
-var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];                           // Einheiten der Werte 
-var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];                     // Maxvalues zum Berechnen der Farbe des Icons    
+var dpValueUnit = ['W', 'W', 'W', 'W', 'W', 'W'];                           // einheiten der Werte 
+var dpValuesMax = [1300, 6000, 600, 4000, 6000, 11000];                     // Maxvalues zum Berechnen der farbe des Icons    
 var valueDirection = ['both', 'in', 'in', 'in', 'both', 'out'];             // laut WIKI nicht genutzt 
 var iconString = ['battery', 'solar-power-variant', 'solar-power-variant', 'home-import-outline', 'transmission-tower', 'car']; // Initial Icons
 var CardpowerHeader ='Energiefluss';                                        // Überschrift der Card zur Identifizierung der angezeigten Seite
 // CustomSend DataPoints for dynamic updating screen
 var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];   /// CustomSend Datenpunkte der Panesl 
-var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage']; // note used
+//var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage']; // note used
        
 
 // ******************************************************************+
@@ -65,12 +66,12 @@ var dpValues, outJSON, outCustomSend ;
 // watch Datapoins for change
 on({id: watch, change: "any"}, async function (obj) {
   var iconColor=  0;
-  dpValues = [getState(Batt_DisCharge).val, 
-              getState(SolarEnergy).val, 
-              getState(BKWEnergy).val, 
-              getState(HouseEnergy).val,
-              getState(GridEnergy).val,
-              0];
+  dpValues = [Batt_DisCharge?getState(Batt_DisCharge).val: 0,  
+              SolarEnergy?getState(SolarEnergy).val:0, 
+              BKWEnergy?getState(BKWEnergy).val:0, 
+              HouseEnergy?getState(HouseEnergy).val:0,
+              GridEnergy?getState(GridEnergy).val:0,
+              CarEnergy?getState(CarEnergy).val:0];
   // start JSON String for outJSON
   outJSON = '[';
   // start String for dynamic update 
@@ -78,20 +79,22 @@ on({id: watch, change: "any"}, async function (obj) {
 
   //for each icon collect values
   for (var i_index in dpValues) {
+    var idx= parseInt(i_index);
     // calculate iconspeed
-    var speed =Math.round( (10* dpValues[i_index]) / dpValuesMax[i_index] );  
+    var speed =Math.round( (10* dpValues[idx]) / dpValuesMax[idx] );  
     
     //Batt icon color depends on AccuLevel   
-    if (i_index == "0") 
+    if (idx == 0) 
       // check healtyness of Battery 
-      if (getState(Batt_Temp).val > 35 || getState(Batt_Health[0]).val < 97 || getState(Batt_Health[1]).val <97 )
+      if ((Batt_Temp && getState(Batt_Temp).val > 35) || (Batt_Health[0] && getState(Batt_Health[0]).val < 97) || Batt_Health[1] && getState(Batt_Health[1]).val < 97 )
       {
         iconString[0]="battery-heart-variant";
         iconColor=10;
       }
       else
       {
-        var level = getState(Batt_AkkuLevel).val; 
+        var level;
+        Batt_AkkuLevel?level = getState(Batt_AkkuLevel).val: level=50;
         iconColor = 10 - Math.round(level / 10) ;
         speed = speed * -1; //invert direction
         // change icon
@@ -110,7 +113,7 @@ on({id: watch, change: "any"}, async function (obj) {
           iconString[0]="battery";
       }
    
-    var idx= parseInt(i_index);
+    
     if(idx == 1 || idx == 2)
       {
         iconColor = 10 - Math.round((10 * dpValues[idx]) / dpValuesMax[idx]) ;    
@@ -128,10 +131,10 @@ on({id: watch, change: "any"}, async function (obj) {
     
     // create item for DPJSON  
     var Item='{ \"id\": ' + i_index +
-             ', \"value\": ' + parseInt(dpValues[i_index]) +
-             ', \"unit\": \"' + dpValueUnit[i_index] +'\"' +
-             ', \"direction\": \"' + valueDirection[i_index] +'\"' +
-             ', \"icon\": \"' + iconString[i_index] +'\"' +
+             ', \"value\": ' + parseInt(dpValues[idx]) +
+             ', \"unit\": \"' + dpValueUnit[idx] +'\"' +
+             ', \"direction\": \"' + valueDirection[idx] +'\"' +
+             ', \"icon\": \"' + iconString[idx] +'\"' +
              ', \"iconColor\": ' + iconColor +
              ', \"speed\": ' + speed + '}';
     if (idx < 5)
@@ -145,8 +148,10 @@ on({id: watch, change: "any"}, async function (obj) {
   }
   // write DPJSON
   outJSON = String(outJSON) + ']';
-  setState(DPJSON, outJSON);
+  if (DPJSON)
+   setState(DPJSON, outJSON) ;
  
+  // dynamische Aktualisierung
   // get activepage for each Panel
   CustomSend.forEach(function (item) {
     var activepage= JSON.stringify(getState(item));
