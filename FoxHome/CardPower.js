@@ -15,7 +15,6 @@
 //
 // Icons unter: https://htmlpreview.github.io/?https://github.com/jobr99/Generate-HASP-Fonts/blob/master/cheatsheet.html
 
-
 // define debug= true for console output 
 let Debug=false;
 
@@ -42,11 +41,9 @@ var CardpowerHeader ='Energiefluss';                                        // Ã
 // CustomSend DataPoints for dynamic updating screen
 var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];   /// CustomSend Datenpunkte der Panesl 
 //var DPActivePage = ['0_userdata.0.NSPanel.1.ActivePage','0_userdata.0.NSPanel.2.ActivePage','0_userdata.0.NSPanel.9.ActivePage']; // note used
-       
-
+    
 // ******************************************************************
 // Check Datapoints
-getState(Batt_DisCharge,handleerror);
 getState(Batt_DisCharge,handleerror);
 getState(SolarEnergy,handleerror);
 getState(BKWEnergy,handleerror);
@@ -63,7 +60,6 @@ function handleerror (err, state) {
     console.log(err.message);
   }
 }
-
 // ******************************************************************
 
 // color definition according to NSPanelts.ts "Dynamische Indikatoren"
@@ -182,7 +178,6 @@ on({id: watch, change: "any"}, async function (obj) {
     if (activepage.includes(CardpowerHeader))
       setState(item,outCustomSend);
   })
-  
       
   if (Debug) {
     console.log(outJSON);
