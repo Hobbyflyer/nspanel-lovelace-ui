@@ -1,7 +1,7 @@
 // Description:
 //  Creates JSON String for NSPanel CardPower
 //  Author: Thorsten Böttcher (Hobbyflyer) 
-//  Date : 10.12.2022
+//  Date : 11.12.2022
 //
 //  { 
 //  "id": 1,                          top left 0 (down) top right 3 (down)                 
@@ -17,6 +17,7 @@
 
 // define debug= true for console output 
 let Debug=false;
+let Demo= true;
 
 // define Datapoints .... 21 - 40 müssen angepasst werden 
 // Aliase vom Typ INFO oder direkt auf das Objekt gehen
@@ -83,6 +84,13 @@ let Icons = new IconsSelector();
 var dpValues, outJSON, outCustomSend ;
 
 // watch Datapoins for change
+if (Demo && DPJSON)
+  {
+    WriteDemoData();    
+    setState(DPJSON, outJSON)
+  } 
+else
+{  
 on({id: watch, change: "any"}, async function (obj) {
   var iconColor=  0;
   dpValues = [Batt_DisCharge?getState(Batt_DisCharge).val: 0,  
@@ -183,9 +191,19 @@ on({id: watch, change: "any"}, async function (obj) {
     console.log(outJSON);
     console.log(outCustomSend);
   }
-});
+})
+};
 
 function rgb_dec565(color) {
     //return ((Math.floor(rgb.red / 255 * 31) << 11) | (Math.floor(rgb.green / 255 * 63) << 5) | (Math.floor(rgb.blue / 255 * 31)));
     return ((color.red >> 3) << 11) | ((color.green >> 2)) << 5 | ((color.blue) >> 3)
+};
+
+function WriteDemoData(){
+    outJSON="[{\"id\": 0,\"value\": 1300,\"unit\": \"W\",\"direction\": \"both\",\"icon\": \"battery-charging-40\",\"iconColor\": 6,\"speed\": -10},";
+    outJSON=outJSON+"{\"id\": 1,\"value\": 2000,\"unit\": \"W\",\"direction\": \"in\",\"icon\": \"solar-power-variant\",\"iconColor\": 5,\"speed\": 4},";
+    outJSON=outJSON+"{\"id\": 2,\"value\": 100,\"unit\": \"W\",\"direction\": \"in\",\"icon\": \"solar-power-variant\",\"iconColor\": 8,\"speed\": 2},";
+    outJSON=outJSON+"{\"id\": 3,\"value\": 400,\"unit\": \"W\",\"direction\": \"in\",\"icon\": \"home-import-outline\",\"iconColor\": 1,\"speed\": 1},";
+    outJSON=outJSON+"{\"id\": 4,\"value\": -400,\"unit\": \"W\",\"direction\": \"both\",\"icon\": \"transmission-tower\",\"iconColor\": 1,\"speed\": 1},";
+    outJSON=outJSON+"{\"id\": 5,\"value\": 0,\"unit\": \"W\",\"direction\": \"both\",\"icon\": \"solar-power-variant\",\"iconColor\": 0,\"speed\": 0}]";
 }
