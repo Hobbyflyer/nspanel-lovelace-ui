@@ -46,8 +46,8 @@ var watch          = [ValueIconLeftUpper, ValueIconLeftMid, ValueIconLeftLower, 
 // Überschrift der Card zur Identifizierung der angezeigten Seite muss dem Header der cardPower entsprechen.
 var CardpowerHeader ='Energiefluss';                                        
 // CustomSend DataPoints for dynamic updating screen
-var ActivePage = ['0_userdata.0.NSPanel.WZ.ActivePage.heading'];
-var CustomSend = ['mqtt.0.NSPanel.cmnd.CustomSend','mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];   
+var ActivePage = ['0_userdata.0.NSPanel.WZ.ActivePage.heading','0_userdata.0.NSPanel.WZ.ActivePage.heading'];
+var CustomSend = ['mqtt.0.NSPanelOG.cmnd.CustomSend','mqtt.0.NSPanelWZ.cmnd.CustomSend'];   
 
 //  end configuration******************************************************************
 
@@ -180,7 +180,7 @@ on({id: watch, change: "any"}, async function (obj) {
     var CSicon= Icons.GetIcon(iconString[i_index]) ;
     var CSiconcolor =  rgb_dec565(color[iconColor]) ;   
     if (idx==0)
-       outCustomSend= outCustomSend + '~' + CSiconcolor+ '~' + CSicon +'~' + parseInt(dpValues[i_index]) + ' ' + dpValueUnit[i_index];
+       outCustomSend= outCustomSend + '~' + CSiconcolor+ '~' + CSicon +'~';// + parseInt(dpValues[i_index]) + ' ' + dpValueUnit[i_index];
     else
        outCustomSend= outCustomSend + '~' + CSiconcolor+ '~' + CSicon +'~' + speed + '~' + parseInt(dpValues[i_index]) + ' ' + dpValueUnit[i_index];
   }
@@ -191,10 +191,10 @@ on({id: watch, change: "any"}, async function (obj) {
  
   // dynamische Aktualisierung
   // get activepage for each Panel
-  //ActivePage.forEach(function (item) {
-  //  if(getState(item).val==CardpowerHeader)
-       setState(CustomSend[2],outCustomSend);
-  //})
+  for (var pindex in ActivePage){
+    if(getState(ActivePage[pindex]).val==CardpowerHeader)
+       setState(CustomSend[pindex],outCustomSend);
+  }
       
   if (Debug) {
     console.log(outJSON);
